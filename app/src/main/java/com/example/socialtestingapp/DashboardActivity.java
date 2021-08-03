@@ -7,10 +7,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
+import com.example.socialtestingapp.fragment.ChatListFragment;
+import com.example.socialtestingapp.fragment.HomeFragment;
+import com.example.socialtestingapp.fragment.ProfileFragment;
+import com.example.socialtestingapp.fragment.UserFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -55,7 +57,7 @@ public class DashboardActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.nav_profile:
-                        actionBar.setTitle("Home");
+                        actionBar.setTitle("Profile");
                         ProfileFragment fragment1=new ProfileFragment();
                          tr1=getSupportFragmentManager().beginTransaction();
                         tr1.replace(R.id.content,fragment1,"");
@@ -63,10 +65,18 @@ public class DashboardActivity extends AppCompatActivity {
                         return true;
 
                     case R.id.nav_user:
-                        actionBar.setTitle("Home");
+                        actionBar.setTitle("Users");
                         UserFragment fragment2=new UserFragment();
                          tr1=getSupportFragmentManager().beginTransaction();
                         tr1.replace(R.id.content,fragment2,"");
+                        tr1.commit();
+                        return true;
+
+                    case R.id.nav_chat:
+                        actionBar.setTitle("Chat");
+                        ChatListFragment fragment3=new ChatListFragment();
+                        tr1=getSupportFragmentManager().beginTransaction();
+                        tr1.replace(R.id.content,fragment3,"");
                         tr1.commit();
                         return true;
                 }
@@ -95,27 +105,6 @@ public class DashboardActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    /*infate options menu*/
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_menu,menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /*handle menu item clicks*/
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_logout:
-                firebaseAuth.signOut();
-                checkUserStatus();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onBackPressed() {

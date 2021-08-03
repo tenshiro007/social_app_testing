@@ -1,4 +1,4 @@
-package com.example.socialtestingapp;
+package com.example.socialtestingapp.model;
 
 public class ModelUser {
     //use same name as in firebase database

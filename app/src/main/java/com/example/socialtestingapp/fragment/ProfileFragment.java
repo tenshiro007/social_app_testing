@@ -1,4 +1,4 @@
-package com.example.socialtestingapp;
+package com.example.socialtestingapp.fragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -19,6 +19,9 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -28,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.socialtestingapp.MainActivity;
+import com.example.socialtestingapp.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -86,16 +91,6 @@ public class ProfileFragment extends Fragment {
     //for checking profile or cover
     String profileOrCoverPhoto;
 
-
-
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -512,5 +507,43 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        setHasOptionsMenu(true);//show menu option in fragment
+        super.onCreate(savedInstanceState);
+    }
+
+    /*infate options menu*/
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_menu,menu);
+        super.onCreateOptionsMenu(menu,inflater);
+    }
+
+    /*handle menu item clicks*/
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_logout:
+                firebaseAuth.signOut();
+                checkUserStatus();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    private void checkUserStatus(){
+        //get current user
+        FirebaseUser user=firebaseAuth.getCurrentUser();
+        if(user!=null){
+            //user is signed in stay here
+        }else{
+            //user not signed in ,go to main activity
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            getActivity().finish();
+        }
     }
 }

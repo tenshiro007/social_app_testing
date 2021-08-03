@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F1EDED"
+    tools:context=".ChatActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/design_default_color_primary_dark"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/profileAvatar"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@color/design_default_color_primary_dark"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_avatar_default" />
+        <!--    app:c_background_color-->
+
+        <!--        receive name-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtHisName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Hisname"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/userStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="online"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chatRecyclerView"
+        android:layout_below="@id/toolbar"/>
+
+<!--    send message edit text and button-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/chatLayout"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/message"
+            android:layout_weight="1"
+            android:inputType="textCapSentences|textMultiLine"
+            android:background="@null"
+            android:hint="Start Typing"
+            android:padding="15dp"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/sendBtn"
+            android:background="@null"
+            android:src="@drawable/ic_send_blue"/>
+
+    </LinearLayout>
+</RelativeLayout>

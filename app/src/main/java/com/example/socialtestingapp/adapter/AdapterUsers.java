@@ -1,6 +1,7 @@
-package com.example.socialtestingapp;
+package com.example.socialtestingapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.socialtestingapp.ChatActivity;
+import com.example.socialtestingapp.R;
+import com.example.socialtestingapp.model.ModelUser;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +41,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
     @Override
     public void onBindViewHolder(@NonNull @NotNull MyHolder holder, int position) {
         //set data from list
+        String hisUID=userList.get(position).getUid();
         String userImage=userList.get(position).getImage();
         String name=userList.get(position).getName();
         String email=userList.get(position).getEmail();
@@ -56,7 +61,14 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>{
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, ""+email, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, ""+email, Toast.LENGTH_SHORT).show();
+                /*  Click user form user list to start chating/messaging
+                    Start activity by putting uid of receiver
+                    we will use that UID to identify the user we are gonna chat
+                 */
+                Intent intent=new Intent(context, ChatActivity.class);
+                intent.putExtra("hisUid",hisUID);
+                context.startActivity(intent);
             }
         });
     }
