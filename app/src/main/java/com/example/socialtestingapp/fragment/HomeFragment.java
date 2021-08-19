@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.socialtestingapp.AddPostActivity;
 import com.example.socialtestingapp.MainActivity;
 import com.example.socialtestingapp.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,6 +55,9 @@ public class HomeFragment extends Fragment {
             case R.id.action_logout:
                 firebaseAuth.signOut();
                 checkUserStatus();
+                break;
+            case R.id.action_add_post:
+                startActivity(new Intent(getActivity(), AddPostActivity.class));
                 break;
             default:
                 break;

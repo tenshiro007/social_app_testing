@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 
+import com.example.socialtestingapp.AddPostActivity;
 import com.example.socialtestingapp.MainActivity;
 import com.example.socialtestingapp.R;
 import com.example.socialtestingapp.adapter.AdapterUsers;
@@ -117,6 +118,9 @@ public class UserFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflating menu
         inflater.inflate(R.menu.menu_menu,menu);
+
+        //hide add post icon from this fragment
+        menu.findItem(R.id.action_add_post).setVisible(false);
 
         //searchView
         MenuItem item=menu.findItem(R.id.action_search);

@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.socialtestingapp.AddPostActivity;
 import com.example.socialtestingapp.MainActivity;
 import com.example.socialtestingapp.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -529,6 +530,9 @@ public class ProfileFragment extends Fragment {
             case R.id.action_logout:
                 firebaseAuth.signOut();
                 checkUserStatus();
+                break;
+            case R.id.action_add_post:
+                startActivity(new Intent(getActivity(), AddPostActivity.class));
                 break;
             default:
                 break;
