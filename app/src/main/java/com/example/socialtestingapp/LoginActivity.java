@@ -100,11 +100,13 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //before authen
-        GoogleSignInOptions gso = new GoogleSignInOptions
-                .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        //config google sign in
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         //google singin
@@ -130,24 +132,27 @@ public class LoginActivity extends AppCompatActivity {
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            String  email=user.getEmail();
-                            String uid=user.getUid();
-                            HashMap<Object,String >hashMap=new HashMap<>();
+                            if(task.getResult().getAdditionalUserInfo().isNewUser()) {
+                                String email = user.getEmail();
+                                String uid = user.getUid();
+                                HashMap<Object, String> hashMap = new HashMap<>();
 
-                            hashMap.put("email",email);
-                            hashMap.put("uid",uid);
-                            hashMap.put("name","");//we will add later
-                            hashMap.put("phone","");
-                            hashMap.put("image","");
-                            hashMap.put("cover","");
+                                hashMap.put("email", email);
+                                hashMap.put("uid", uid);
+                                hashMap.put("name", "");//we will add later
+                                hashMap.put("onlineStatus","online");
+                                hashMap.put("typingTo","onOne");
+                                hashMap.put("phone", "");
+                                hashMap.put("image", "");
+                                hashMap.put("cover", "");
 
-                            //firebase database instance
-                            FirebaseDatabase database=FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/");
-                            //path to store user data nameed"Users"
-                            DatabaseReference reference=database.getReference("Users");
-                            //put data within hashmap in database
-                            reference.child(uid).setValue(hashMap);
-
+                                //firebase database instance
+                                FirebaseDatabase database = FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/");
+                                //path to store user data nameed"Users"
+                                DatabaseReference reference = database.getReference("Users");
+                                //put data within hashmap in database
+                                reference.child(uid).setValue(hashMap);
+                            }
 
 
 //                            updateUI(user);
@@ -278,6 +283,8 @@ public class LoginActivity extends AppCompatActivity {
                                 hashMap.put("email",email);
                                 hashMap.put("uid",uid);
                                 hashMap.put("name","");//we will add later
+                                hashMap.put("onlineStatus","online");
+                                hashMap.put("typingTo","onOne");
                                 hashMap.put("phone","");
                                 hashMap.put("image","");
                                 hashMap.put("cover","");
