@@ -13,7 +13,10 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -27,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +38,8 @@ import com.bumptech.glide.Glide;
 import com.example.socialtestingapp.AddPostActivity;
 import com.example.socialtestingapp.MainActivity;
 import com.example.socialtestingapp.R;
+import com.example.socialtestingapp.adapter.AdapterPosts;
+import com.example.socialtestingapp.model.ModelPost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -51,8 +57,12 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -63,6 +73,10 @@ public class ProfileFragment extends Fragment {
     private FirebaseUser user;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference reference;
+    RecyclerView postRecycler;
+    List<ModelPost>postlist;
+    AdapterPosts adapterPosts;
+    String uid;
 
     //storage
     StorageReference storageReference;
@@ -72,8 +86,8 @@ public class ProfileFragment extends Fragment {
 
     //view
     private ImageView avatar,coverImage;
-    private FloatingActionButton floatAction;
     private TextView txtName, txtEmail, txtPhone;
+    private FloatingActionButton floatAction;
     private ProgressDialog progressDialog;
 
     //Permission contants
@@ -100,6 +114,8 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         initView(view);
+
+        postlist=new ArrayList<>();
 
         /*get info of current signed in user. we can get it using user's email or uid
         (this using email) By using orderByChild query we will show the dialog form node
@@ -155,7 +171,88 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        checkUserStatus();
+        loadMyPost();
+
         return view;
+    }
+
+    private void loadMyPost() {
+        //linear layout for recyclerview
+        LinearLayoutManager layoutManager=new LinearLayoutManager(getContext());
+
+        //show newest post first,for this load from last
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+        //set this layout to recyclerview
+        postRecycler.setLayoutManager(layoutManager);
+
+        //init posts list
+        DatabaseReference ref=FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");
+
+        //query to load post
+        Query query=ref.orderByChild("uid").equalTo(uid);
+
+        //get all data from this ref
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                postlist.clear();
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    ModelPost mypost=ds.getValue(ModelPost.class);
+
+                    postlist.add(mypost);
+                    adapterPosts=new AdapterPosts(getActivity(),postlist);
+                    postRecycler.setAdapter(adapterPosts);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Toast.makeText(getContext(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void searchMyPost(String search) {
+        //linear layout for recyclerview
+        LinearLayoutManager layoutManager=new LinearLayoutManager(getContext());
+
+        //show newest post first,for this load from last
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+        //set this layout to recyclerview
+        postRecycler.setLayoutManager(layoutManager);
+
+        //init posts list
+        DatabaseReference ref=FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");
+
+        //query to load post
+        Query query=ref.orderByChild("uid").equalTo(uid);
+
+        //get all data from this ref
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                postlist.clear();
+                for(DataSnapshot ds:snapshot.getChildren()){
+                    ModelPost mypost=ds.getValue(ModelPost.class);
+                    if(mypost.getpTitle().toLowerCase().equals(search.toLowerCase())||
+                    mypost.getpDescr().toLowerCase().equals(search.toLowerCase())){
+                        postlist.add(mypost);
+                    }
+                    adapterPosts=new AdapterPosts(getActivity(),postlist);
+                    postRecycler.setAdapter(adapterPosts);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Toast.makeText(getContext(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showEditProfileDialog() {
@@ -238,6 +335,25 @@ public class ProfileFragment extends Fragment {
 
                         }
                     });
+                    //if User edit his name,also change it form hist posts
+                    if(key.equals("name")){
+                        DatabaseReference ref=FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");
+                        Query query=ref.orderByChild("uid").equalTo(uid);
+                        query.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                for(DataSnapshot d:snapshot.getChildren()){
+                                    String child=d.getKey();
+                                    snapshot.getRef().child(child).child("uName").setValue(value);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 }else{
                     Toast.makeText(getActivity(), "Please enter "+key , Toast.LENGTH_SHORT).show();
                 }
@@ -306,6 +422,7 @@ public class ProfileFragment extends Fragment {
         txtPhone = view.findViewById(R.id.txtPhone);
         coverImage=view.findViewById(R.id.coverPhoto);
         floatAction=view.findViewById(R.id.btnFloating);
+        postRecycler=view.findViewById(R.id.recyclerView_post);
 
         //init progression
         progressDialog=new ProgressDialog(getContext());
@@ -494,6 +611,26 @@ public class ProfileFragment extends Fragment {
                             Toast.makeText(getContext(), "Error Updating Image...", Toast.LENGTH_SHORT).show();
                         }
                     });
+
+                    //if User edit his name,also change it from  posts
+                    if(profileOrCoverPhoto.equals("image")){
+                        DatabaseReference ref=FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");
+                        Query query=ref.orderByChild("uid").equalTo(uid);
+                        query.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                for(DataSnapshot d:snapshot.getChildren()){
+                                    String child=d.getKey();
+                                    snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+                    }
                 }else{
                     //error
                     progressDialog.dismiss();
@@ -508,6 +645,7 @@ public class ProfileFragment extends Fragment {
                 Toast.makeText(getContext(), ""+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     @Override
@@ -520,6 +658,30 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_menu,menu);
+
+        MenuItem item=menu.findItem(R.id.action_search);
+        SearchView searchView= (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(!TextUtils.isEmpty(query)){
+                    searchMyPost(query);
+                }else{
+                    loadMyPost();
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(!TextUtils.isEmpty(newText)){
+                    searchMyPost(newText);
+                }else{
+                    loadMyPost();
+                }
+                return false;
+            }
+        });
         super.onCreateOptionsMenu(menu,inflater);
     }
 
@@ -544,6 +706,7 @@ public class ProfileFragment extends Fragment {
         FirebaseUser user=firebaseAuth.getCurrentUser();
         if(user!=null){
             //user is signed in stay here
+            uid=user.getUid();
         }else{
             //user not signed in ,go to main activity
             startActivity(new Intent(getActivity(), MainActivity.class));
