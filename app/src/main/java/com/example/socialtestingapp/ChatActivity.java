@@ -89,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
         initView();
         //init
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase=FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/");
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,6 +134,9 @@ public class ChatActivity extends AppCompatActivity {
 
         readMessages();
         seenMessage();
+
+
+
     }
 
     private void seenMessage() {
@@ -224,6 +228,39 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        //create chatlist node/child in firebase database
+        DatabaseReference chatRef=firebaseDatabase.getReference("Chatlist")
+                .child(myUid).child(hisUid);
+        chatRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    chatRef.child("id").setValue(hisUid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
+        DatabaseReference chatRef2=firebaseDatabase.getReference("Chatlist")
+                .child(hisUid).child(myUid);
+
+        chatRef2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    chatRef2.child("id").setValue(myUid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void senNotification(String hisUid, String name, String msg) {

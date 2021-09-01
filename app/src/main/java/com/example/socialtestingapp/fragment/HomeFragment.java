@@ -87,7 +87,7 @@ public class HomeFragment extends Fragment {
 
                     postList.add(modelPost);
 
-                    Log.d(TAG, "onDataChange: postList "+modelPost.toString());
+//                    Log.d(TAG, "onDataChange: postList "+modelPost.toString());
                     //adapter
                     adapterPosts=new AdapterPosts(getActivity(),postList);
 

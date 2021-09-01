@@ -353,6 +353,40 @@ public class ProfileFragment extends Fragment {
 
                             }
                         });
+
+                        //update name in current users comments on posts
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                for(DataSnapshot d:snapshot.getChildren()){
+                                    String child=d.getKey();
+                                    if(snapshot.child(child).hasChild("Comments")){
+                                        String child1=""+snapshot.child(child).getKey();
+                                        Query child2=firebaseDatabase.getReference("Posts").child(child1).child("Comments").orderByChild("uid");
+                                        child2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                for(DataSnapshot d:snapshot.getChildren()){
+                                                    String child=d.getKey();
+                                                    snapshot.getRef().child(child).child("uName").setValue(value);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
                     }
                 }else{
                     Toast.makeText(getActivity(), "Please enter "+key , Toast.LENGTH_SHORT).show();
@@ -630,6 +664,73 @@ public class ProfileFragment extends Fragment {
 
                             }
                         });
+                        //update name in current users comments on posts
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                for(DataSnapshot d:snapshot.getChildren()){
+                                    String child=d.getKey();
+                                    if(snapshot.child(child).hasChild("Comments")){
+                                        String child1=""+snapshot.child(child).getKey();
+                                        Query child2=firebaseDatabase.getReference("Posts").child(child1).child("Comments").orderByChild("uid");
+                                        child2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                for(DataSnapshot d:snapshot.getChildren()){
+                                                    String child=d.getKey();
+                                                    snapshot.getRef().child(child).child("uDp").setValue(downloadUri.toString());
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+                        //update name in current users comments on posts
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                for(DataSnapshot d:snapshot.getChildren()){
+                                    String child=d.getKey();
+                                    if(snapshot.child(child).hasChild("Comments")){
+                                        String child1=""+snapshot.child(child).getKey();
+                                        Query child2=firebaseDatabase.getReference("Posts").child(child1).child("Comments").orderByChild("uid");
+                                        child2.addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                                for(DataSnapshot d:snapshot.getChildren()){
+                                                    String child=d.getKey();
+                                                    snapshot.getRef().child(child).child("uDp").setValue(downloadUri);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                            }
+                                        });
+
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+
                     }
                 }else{
                     //error
