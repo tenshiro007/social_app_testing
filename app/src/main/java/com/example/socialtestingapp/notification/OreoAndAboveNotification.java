@@ -11,7 +11,6 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import retrofit2.http.Url;
 
 public class OreoAndAboveNotification extends ContextWrapper {
     private static final String ID="some_id";

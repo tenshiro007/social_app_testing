@@ -1,18 +1,27 @@
 package com.example.socialtestingapp.model;
 
 public class ModelChat {
-    private String message,receiver,sender,timeStamp;
+    private String message,receiver,sender,timeStamp,type;
     boolean isSeen;
 
     public ModelChat() {
     }
 
-    public ModelChat(String message, String receiver, String sender, String timeStamp, boolean isSeen) {
+    public ModelChat(String message, String receiver, String sender, String timeStamp, String type, boolean isSeen) {
         this.message = message;
         this.receiver = receiver;
         this.sender = sender;
         this.timeStamp = timeStamp;
+        this.type = type;
         this.isSeen = isSeen;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getMessage() {
@@ -62,6 +71,7 @@ public class ModelChat {
                 ", receiver='" + receiver + '\'' +
                 ", sender='" + sender + '\'' +
                 ", timeStamp='" + timeStamp + '\'' +
+                ", type='" + type + '\'' +
                 ", isSeen=" + isSeen +
                 '}';
     }

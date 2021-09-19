@@ -78,18 +78,19 @@ public class HomeFragment extends Fragment {
         //path of all post
         DatabaseReference ref= FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");
         //get all data from path
-        ref.addValueEventListener(new ValueEventListener() {
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 postList.clear();
-                for(DataSnapshot ds: snapshot.getChildren()){
-                    ModelPost modelPost=ds.getValue(ModelPost.class);
+                for(DataSnapshot ds: snapshot.getChildren()) {
+                    ModelPost modelPost = ds.getValue(ModelPost.class);
 
                     postList.add(modelPost);
 
 //                    Log.d(TAG, "onDataChange: postList "+modelPost.toString());
                     //adapter
-                    adapterPosts=new AdapterPosts(getActivity(),postList);
+                    adapterPosts = new AdapterPosts(getActivity(), postList);
 
                     //set adptter to recycler
                     recyclerView.setAdapter(adapterPosts);
@@ -101,6 +102,29 @@ public class HomeFragment extends Fragment {
                 Toast.makeText(getContext(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+//        ref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+//                postList.clear();
+//                for(DataSnapshot ds: snapshot.getChildren()){
+//                    ModelPost modelPost=ds.getValue(ModelPost.class);
+//
+//                    postList.add(modelPost);
+//
+////                    Log.d(TAG, "onDataChange: postList "+modelPost.toString());
+//                    //adapter
+//                    adapterPosts=new AdapterPosts(getActivity(),postList);
+//
+//                    //set adptter to recycler
+//                    recyclerView.setAdapter(adapterPosts);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+//                Toast.makeText(getContext(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
     private void searchPost(String searchQuery){
         //path of all post

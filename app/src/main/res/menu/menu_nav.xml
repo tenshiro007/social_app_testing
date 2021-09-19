@@ -12,4 +12,7 @@
     <item android:id="@+id/nav_chat"
         android:title="Chat"
         android:icon="@drawable/ic_chat"/>
+    <item android:id="@+id/nav_noti"
+        android:title="Notificati ons"
+        android:icon="@drawable/ic_noti_black"/>
 </menu>

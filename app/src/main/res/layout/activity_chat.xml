@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     android:background="#F1EDED"
     tools:context=".ChatActivity">
+    
+
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -13,6 +15,11 @@
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/design_default_color_primary_dark"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/profileAvatar"
@@ -25,6 +32,7 @@
 
         <!--        receive name-->
         <LinearLayout
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -49,6 +57,16 @@
                 android:textColor="@color/white"
                 android:textStyle="bold" />
         </LinearLayout>
+            <ImageView
+                android:id="@+id/blockTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_unblock_green"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="5dp"/>
+
+        </LinearLayout>
+
     </com.google.android.material.appbar.MaterialToolbar>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -66,6 +84,14 @@
         android:id="@+id/chatLayout"
         android:background="@color/white"
         android:orientation="horizontal">
+
+<!--            imageButton to send image&ndash;&gt;-->
+        <ImageButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/attachbtn"
+            android:src="@drawable/ic_attach_black"/>
+
 
         <EditText
             android:layout_width="match_parent"

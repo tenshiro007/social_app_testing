@@ -3,11 +3,9 @@ package com.example.socialtestingapp.model;
 public class ModelUser {
     //use same name as in firebase database
     String name, email, search, phone, image, cover, uid, onlineStatus, typingTo;
+    boolean isBoocked=false;
 
-    public ModelUser() {
-    }
-
-    public ModelUser(String name, String email, String search, String phone, String image, String cover, String uid, String onlineStatus, String typingTo) {
+    public ModelUser(String name, String email, String search, String phone, String image, String cover, String uid, String onlineStatus, String typingTo, boolean isBoocked) {
         this.name = name;
         this.email = email;
         this.search = search;
@@ -17,7 +15,21 @@ public class ModelUser {
         this.uid = uid;
         this.onlineStatus = onlineStatus;
         this.typingTo = typingTo;
+        this.isBoocked = isBoocked;
     }
+
+    public boolean isBoocked() {
+        return isBoocked;
+    }
+
+    public void setBoocked(boolean boocked) {
+        isBoocked = boocked;
+    }
+
+    public ModelUser() {
+    }
+
+
 
     public String getOnlineStatus() {
         return onlineStatus;

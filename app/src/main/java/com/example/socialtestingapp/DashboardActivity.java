@@ -4,12 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.socialtestingapp.fragment.ChatListFragment;
 import com.example.socialtestingapp.fragment.HomeFragment;
@@ -26,17 +29,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.jetbrains.annotations.NotNull;
+
 public class DashboardActivity extends AppCompatActivity {
     private static final String TAG = "DashboardActivity";
     String mUid;
     //firebase auth
     FirebaseAuth firebaseAuth;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        swipeRefreshLayout = findViewById(R.id.swipperLayout);
 
         //Actionbar and title
         ActionBar actionBar = getSupportActionBar();
@@ -56,7 +63,10 @@ public class DashboardActivity extends AppCompatActivity {
 
         checkUserStatus();
 
-
+                        ProfileFragment fragment1 = new ProfileFragment();
+                        UserFragment fragment2 = new UserFragment();
+                        ChatListFragment fragment3 = new ChatListFragment();
+                        NotificationsFragment fragment4 = new NotificationsFragment();
 
         BottomNavigationView navBottom = findViewById(R.id.navBottom);
         navBottom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
@@ -65,7 +75,6 @@ public class DashboardActivity extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.nav_home:
                         actionBar.setTitle("Home");
-                        HomeFragment fragment = new HomeFragment();
                         FragmentTransaction tr1 = getSupportFragmentManager().beginTransaction();
                         tr1.replace(R.id.content, fragment, "");
                         tr1.commit();
@@ -73,7 +82,6 @@ public class DashboardActivity extends AppCompatActivity {
 
                     case R.id.nav_profile:
                         actionBar.setTitle("Profile");
-                        ProfileFragment fragment1 = new ProfileFragment();
                         tr1 = getSupportFragmentManager().beginTransaction();
                         tr1.replace(R.id.content, fragment1, "");
                         tr1.commit();
@@ -81,7 +89,6 @@ public class DashboardActivity extends AppCompatActivity {
 
                     case R.id.nav_user:
                         actionBar.setTitle("Users");
-                        UserFragment fragment2 = new UserFragment();
                         tr1 = getSupportFragmentManager().beginTransaction();
                         tr1.replace(R.id.content, fragment2, "");
                         tr1.commit();
@@ -89,13 +96,86 @@ public class DashboardActivity extends AppCompatActivity {
 
                     case R.id.nav_chat:
                         actionBar.setTitle("Chat");
-                        ChatListFragment fragment3 = new ChatListFragment();
                         tr1 = getSupportFragmentManager().beginTransaction();
                         tr1.replace(R.id.content, fragment3, "");
                         tr1.commit();
                         return true;
+
+                    case R.id.nav_noti:
+                        actionBar.setTitle("Chat");
+                        tr1 = getSupportFragmentManager().beginTransaction();
+                        tr1.replace(R.id.content, fragment4, "");
+                        tr1.commit();
+                        return true;
                 }
                 return false;
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                BottomNavigationView navBottom = findViewById(R.id.navBottom);
+//                getSupportFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
+//                navBottom.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+//                    @Override
+//                    public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+//                        switch (item.getItemId()){
+//                            case R.id.nav_home:
+//                                Toast.makeText(DashboardActivity.this, "Home", Toast.LENGTH_SHORT).show();
+//                                Log.d(TAG, "onNavigationItemSelected: test::"+"Home");
+//                                break;
+//                            case R.id.nav_profile:
+//                                Toast.makeText(DashboardActivity.this, "profile", Toast.LENGTH_SHORT).show();
+//                                Log.d(TAG, "onNavigationItemSelected: test::"+"profile");
+//                                break;
+//                            default:
+//                                Toast.makeText(DashboardActivity.this, "Other", Toast.LENGTH_SHORT).show();
+//                                Log.d(TAG, "onNavigationItemSelected: test::"+"Other");
+//                                break;
+//                        }
+//                        return false;
+//                    }
+//                });
+
+                switch (navBottom.getSelectedItemId()) {
+                    case R.id.nav_home:
+                        actionBar.setTitle("Home");
+//                        HomeFragment fragment = new HomeFragment();
+                        Toast.makeText(DashboardActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager().beginTransaction().detach(fragment).attach(fragment).commit();
+                        break;
+                    case R.id.nav_profile:
+                        actionBar.setTitle("Profile");
+//                        ProfileFragment fragment1 = new ProfileFragment();
+                        Toast.makeText(DashboardActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager().beginTransaction().detach(fragment1).attach(fragment1).commit();
+                        break;
+
+                    case R.id.nav_user:
+                        actionBar.setTitle("Users");
+//                        UserFragment fragment2 = new UserFragment();
+                        Toast.makeText(DashboardActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager().beginTransaction().detach(fragment2).attach(fragment2).commit();
+                        break;
+
+                    case R.id.nav_chat:
+                        actionBar.setTitle("Chat");
+//                        ChatListFragment fragment3 = new ChatListFragment();
+                        Toast.makeText(DashboardActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager().beginTransaction().detach(fragment3).attach(fragment3).commit();
+                        break;
+
+                    case R.id.nav_noti:
+                        actionBar.setTitle("Chat");
+//                        NotificationsFragment fragment4 = new NotificationsFragment();
+                        Toast.makeText(DashboardActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                        getSupportFragmentManager().beginTransaction().detach(fragment4).attach(fragment4).commit();
+                        break;
+                }
+
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 

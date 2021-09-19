@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -55,21 +56,24 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 public class AddPostActivity extends AppCompatActivity {
+    private static final String TAG = "AddPostActivity";
     //permission constants
     private static final int CAMERA_REQUEST_CODE = 100;
     private static final int STORAGE_REQUEST_CODE = 200;
     //image pick constants
     private static final int IMAGE_PICK_CAMERA_CODE = 300;
     private static final int IMAGE_PICK_GALLERY_CODE = 400;
+    //permissions array
+    String[] cameraPermissions;
+    String[] storagePermissions;
+
+
     ActionBar actionBar;
     FirebaseAuth firebaseAuth;
     DatabaseReference userDbRef;
     //image picked will be samed in this uri
     Uri image_uri = null;
 
-    //permissions array
-    String[] cameraPermissions;
-    String[] storagePermissions;
 
     //views
     EditText etitle, edescrip;
@@ -114,7 +118,27 @@ public class AddPostActivity extends AppCompatActivity {
 
         //get data through intent from previous adapter
         Intent intent = getIntent();
-         isUpdateKey = "" + intent.getStringExtra("key");
+
+        //get data and its type from intent
+        String action=intent.getAction();
+        String type=intent.getType();
+        if(Intent.ACTION_SEND.equals(action)&&type!=null){
+            Log.d(TAG, "onCreate: action ::"+action+" \ntype::"+type+" \nintent ::"+intent);
+            if("text/plain".equals(type)){
+                //text type data
+                Log.d(TAG, "onCreate: type::"+"text");
+                handleSendText(intent);
+            } else if(type.startsWith("image")){
+                Log.d(TAG, "onCreate: type::" + "image2");
+                //image type data
+                handleSendImage(intent);
+            }else{
+                Log.d(TAG, "onCreate: type::"+"no match");
+            }
+        }
+
+
+        isUpdateKey = "" + intent.getStringExtra("key");
          editPostId = "" + intent.getStringExtra("editPostId");
 
             //validate if we came here to update post i.e. came from adapterpost
@@ -158,6 +182,21 @@ public class AddPostActivity extends AppCompatActivity {
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
+    }
+
+    private void handleSendImage(Intent intent) {
+        Uri imageUri=(Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if(imageUri!=null){
+            image_uri=imageUri;
+            image.setImageURI(image_uri);
+        }
+    }
+
+    private void handleSendText(Intent intent) {
+        String shareText=intent.getStringExtra(Intent.EXTRA_TEXT);
+        if(shareText!=null){
+            edescrip.setText(shareText);
+        }
     }
 
     private void loadPostData(String editPostId) {
@@ -476,6 +515,8 @@ public class AddPostActivity extends AppCompatActivity {
                         hashMap.put("pDescr", description);
                         hashMap.put("pImage", downloadUri);
                         hashMap.put("pTime", timeStamp);
+                        hashMap.put("pLikes", "0");
+                        hashMap.put("pComments", "0");
 
                         //path to store post data
                         DatabaseReference ref = FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");
@@ -520,6 +561,8 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pDescr", description);
             hashMap.put("pImage", "noImage");
             hashMap.put("pTime", timeStamp);
+            hashMap.put("pLikes", "0");
+            hashMap.put("pComments", "0");
 
             //path to store post data
             DatabaseReference ref = FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Posts");

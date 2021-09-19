@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -71,12 +72,25 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.Myholder> {
         //get data
         String message = chatslist.get(position).getMessage();
         String timeStamp = chatslist.get(position).getTimeStamp();
+        String type = chatslist.get(position).getType();
 
         //conver time stamp to dd/mm/yyyy hh:mm am/pm
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(Long.parseLong(timeStamp));
         String dateTime = (String) DateFormat.format("dd/MM/yyyy hh:mm:aa", cal);
 
+        if(type.equals("text")){
+            holder.message.setVisibility(View.VISIBLE);
+            holder.messageTv.setVisibility(View.GONE);
+
+            holder.message.setText(message);
+
+        }else{
+            holder.message.setVisibility(View.GONE);
+            holder.messageTv.setVisibility(View.VISIBLE);
+
+            Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(holder.messageTv);
+        }
         //set data
         if (!message.equals("")) {
 
@@ -189,12 +203,14 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.Myholder> {
     protected class Myholder extends RecyclerView.ViewHolder {
         //view
         private CircularImageView profile;
+        private ImageView messageTv;
         private TextView message, time, isSeen;
         private LinearLayout messageLayout;
 
         public Myholder(@NonNull @NotNull View itemView) {
             super(itemView);
             //initView
+            messageTv=itemView.findViewById(R.id.imageTv);
             profile = itemView.findViewById(R.id.profile);
             message = itemView.findViewById(R.id.txtMessage);
             time = itemView.findViewById(R.id.txtTime);

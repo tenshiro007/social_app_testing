@@ -18,12 +18,13 @@ import androidx.core.app.NotificationCompat;
 import com.example.socialtestingapp.ChatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
-import retrofit2.http.Url;
 
 public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
@@ -111,5 +112,24 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             j=i;
         }
         notification1.getManager().notify(j, builder.build());
+    }
+
+    @Override
+    public void onNewToken(@NonNull @NotNull String s) {
+        super.onNewToken(s);
+
+        //update user token
+        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+        if(user!=null){
+            //signed in ,update token
+            updateToken(s);
+        }
+    }
+
+    private void updateToken(String tokenRefresh) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference ref = FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Tokens");
+        Token token=new Token(tokenRefresh);
+        ref.child(user.getUid()).setValue(token);
     }
 }

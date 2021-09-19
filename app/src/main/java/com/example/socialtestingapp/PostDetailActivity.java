@@ -122,6 +122,7 @@ public class PostDetailActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: hisUid::"+hisUid);
                 postComment();
             }
         });
@@ -129,6 +130,7 @@ public class PostDetailActivity extends AppCompatActivity {
         likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: hisUid2::"+hisUid);
                 likePost();
             }
         });
@@ -225,7 +227,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     comments.add(modelComment);
 
                     //pass myuid and postid as paremeter of constructor of comment adapter
-                    Log.d(TAG, "onDataChange: commentlist "+modelComment.toString());
+//                    Log.d(TAG, "onDataChange: commentlist "+modelComment.toString());
 
 
                     //setup adapter
@@ -418,6 +420,8 @@ public class PostDetailActivity extends AppCompatActivity {
                         postRef.child(postId).child("pLikes").setValue(""+(Integer.parseInt(pLikes )+1));
                         likeRef.child(postId).child(myUid).setValue("Liked");//set any value
                         mProcessLike=false;
+                        Log.d(TAG, "onDataChange: like::hisUid::"+hisUid);
+                        addToHisNotifications(""+hisUid,""+postId,"Liked your post");
 
 //                        likeBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_like_color,0,0,0);
 //                        likeBtn.setText("Liked");
@@ -431,6 +435,35 @@ public class PostDetailActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+    private void addToHisNotifications(String hisUid, String pId, String notification) {
+        //timestamp for time and notification id
+        String timestamp = "" + System.currentTimeMillis();
+
+        //date to put in notification in firebase
+        HashMap<Object, String> hashMap = new HashMap<>();
+        hashMap.put("pId", pId);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("pUid", hisUid);
+        hashMap.put("notification", notification);
+        hashMap.put("sUid", myUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance("https://socialapptesting-f0a1e-default-rtdb.asia-southeast1.firebasedatabase.app/").getReference("Users");
+        ref.child(hisUid).child("Notifications").child(timestamp).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        //added successfully
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull @NotNull Exception e) {
+
+                    }
+                });
+
 
     }
 
@@ -467,7 +500,11 @@ public class PostDetailActivity extends AppCompatActivity {
                        pd.dismiss();
                         Toast.makeText(PostDetailActivity.this, "Comment Added", Toast.LENGTH_SHORT).show();
                         commentEt.setText("");
+
+                        Log.d(TAG, "onSuccess: comment::hisUid::"+hisUid);
+                        addToHisNotifications(""+hisUid,""+postId,"Commented on your post");
                         updateCommentCount();
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -549,7 +586,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     String pTimeStamp=""+d.child("pTime").getValue();
                      pImage=""+d.child("pImage").getValue();
                     hisDp=""+d.child("uDp").getValue();
-                     hisUid=""+d.child("uId").getValue();
+                     hisUid=""+d.child("uid").getValue();
                     String uEmail=""+d.child("uEmail").getValue();
                      hisName=""+d.child("uName").getValue();
                      String commentCount=""+d.child("pComments").getValue();
@@ -567,6 +604,16 @@ public class PostDetailActivity extends AppCompatActivity {
                     pCommentTv.setText(commentCount+ "Comments");
 
                     uNameTv.setText(hisName);
+
+
+                    pLikeTv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent=new Intent(PostDetailActivity.this, PostLikeByActivity.class);
+                            intent.putExtra("postId",postId);
+                            startActivity(intent);
+                        }
+                    });
 
                     // set image of the user who posted
                     if(pImage.equals("noImage")){
